@@ -1,0 +1,93 @@
+version: 2
+jobs:
+  validate:
+    docker:
+    - image: circleci/openjdk:8-jdk-node
+    steps:
+    - checkout
+    - run:
+        name: Generate Cache Checksum
+        command: find . -name 'pom.xml' | sort | xargs cat > /tmp/maven_cache_seed
+    - restore_cache:
+        key: maven-{{ checksum "/tmp/maven_cache_seed" }}
+    - run:
+        name: Install Dependencies
+        command: mvn dependency:go-offline --settings 'pom.xml'
+    - run:
+        name: Run Tests
+        command: mvn verify --settings 'pom.xml'
+    - save_cache:
+        paths:
+        - ~/.m2
+        key: maven-{{ checksum "/tmp/maven_cache_seed" }}
+    - store_test_results:
+        path: target/surefire-reports
+    - run:
+        name: Build Application WAR
+        command: |
+          mvn clean install
+  deploy:
+    docker:
+    - image: circleci/openjdk:8-jdk-node
+    steps:
+    - checkout
+    - run:
+        name: Generate Cache Checksum
+        command: find . -name 'pom.xml' | sort | xargs cat > /tmp/maven_cache_seed
+    - restore_cache:
+        key: maven-{{ checksum "/tmp/maven_cache_seed" }}
+    - run:
+        name: Install Dependencies
+        command: mvn dependency:go-offline --settings 'pom.xml'
+    - run:
+        name: Run Tests
+        command: mvn verify --settings 'pom.xml'
+    - save_cache:
+        paths:
+        - ~/.m2
+        key: maven-{{ checksum "/tmp/maven_cache_seed" }}
+    - store_test_results:
+        path: target/surefire-reports
+    - run:
+        name: Build Application WAR
+        command: |
+          mvn clean install    
+    - run:
+        name: Build Application Artifact
+        command: |
+            mkdir codedeploy_artifact
+            zip -r csye6225-webapp-${CIRCLE_BUILD_NUM}.zip ~/project/target/ROOT.war codedeploy/*.sh appspec.yml cloudwatch.json
+            mv csye6225-webapp-${CIRCLE_BUILD_NUM}.zip codedeploy_artifact/
+    - run:
+        name: Install AWS CLI
+        command: |
+            cd .circleci
+            chmod +x awscliInstall.sh
+            ./awscliInstall.sh
+    - run:
+        name: Upload Artifact to Code Deploy S3 Bucket
+        command: |
+           export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+           export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+           export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+           aws s3 sync ./codedeploy_artifact s3://${S3_CODEDEPLOY_BUCKET}
+    - run:
+        name: Make Code Deploy API Call
+        command: |
+            AWS_PAGER="" aws deploy create-deployment --application-name ${CODEDEPLOY_APPLICATION_NAME} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${CODEDEPLOY_APPLICATION_DEPLOYMENT_GROUP_NAME} --s3-location bucket=${S3_CODEDEPLOY_BUCKET},bundleType=zip,key=csye6225-webapp-${CIRCLE_BUILD_NUM}.zip --region us-east-1       
+workflows:
+  validate_Pull:
+    jobs:
+    - validate
+  build_deploy:
+    jobs:
+    - validate    
+    - deploy:
+        requires:
+            - validate
+        filters:
+            branches:
+                ignore:
+                    - /a.*/
+                only: master    
+  version: 2
