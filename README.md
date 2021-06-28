@@ -25,7 +25,7 @@ Upon merge, CircleCI creates code artifact and uploads the same to S3 bucket and
 
 ### AMAZON MACHINE IMAGE (AMI)
 
-Using **Packer by HashiCorp**, AMI is built and deployed with required customization. Please find details on the AMI used for this project in this [repo](https://github.com/aelinadas/amazon-machine-image).
+Using **Packer by HashiCorp**, AMI is built and deployed with required customization. Please find details on the AMI used for this project in this [repository](https://github.com/aelinadas/amazon-machine-image).
 
 <img alt="ami" src="https://github.com/aelinadas/bookstore/blob/main/images/AMI.png" />
 
@@ -33,13 +33,13 @@ Using **Packer by HashiCorp**, AMI is built and deployed with required customiza
 
 ### INFRASTRUCTURE
 
-Using **Terraform**, infrastructure for hosting the web application on AWS is built. Please find details regarding infrastructure in this [repo](https://github.com/aelinadas/aws-infrastructure).
+Using **Terraform**, infrastructure for hosting the web application on AWS is built. Please find details regarding infrastructure in this [repository](https://github.com/aelinadas/aws-infrastructure).
 
 ---
 
 ### AWS Lambda
 
-To adopt microservices architecture, generation of reset password link feature is configured to run as a Lambda function. Please find details regarding the Lambda function in this [repo](https://github.com/aelinadas/aws-lambda).
+To adopt microservices architecture, generation of reset password link feature is configured to run as a Lambda function. Please find details regarding the Lambda function in this [repository](https://github.com/aelinadas/aws-lambda).
 
 <img alt="Lambda" src="https://github.com/aelinadas/bookstore/blob/main/images/Lambda.png" />
 
