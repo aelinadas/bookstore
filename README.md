@@ -16,9 +16,9 @@ The entire infrastructure is built as code using **Terraform**.
 
 ---
 
-### CI/CD Pipeline
+### CI/CD PIPELINE
 
-Using CircleCI, CI/CD pipelines are set that validates the code by running unit test cases and allows only the valid code to be merged with main branch.
+CI/CD pipelines are configured to validate the code by running unit test cases and allows only the valid code to be merged with main branch.
 Upon merge, CircleCI creates code artifact and uploads the same to S3 bucket and later invokes AWS CodeDeploy to deploy the latest version of the code in tomcat server.
 
 ---
@@ -31,9 +31,9 @@ Using **Packer by HashiCorp**, AMI is built and deployed with required customiza
 
 ---
 
-### INFRASTRUCTURE
+### INFRASTRUCTURE (IaaC)
 
-Using **Terraform**, infrastructure for hosting the web application on AWS is built. Please find details regarding infrastructure in this [repository](https://github.com/aelinadas/aws-infrastructure).
+Infrastructure for hosting the web application on AWS is built using **Terraform**. Please find details regarding infrastructure in this [repository](https://github.com/aelinadas/aws-infrastructure).
 
 ---
 
@@ -47,13 +47,13 @@ To adopt microservices architecture, generation of reset password link feature i
 
 ### MONTORING and LOGGING
 
-1. Centralized logging is implemented to collect the logs from all the EC2 instances and eliminated loss of log data when EC2 instances are brought down
-2. Utilized statsD to collect custom metrics like Database Access time, S3 data access time, number of API request, etc. and passed it to **AWS CloudWatch Agent**
-3. Configured CPU Utilization alarms to dynamically increase or decrease the EC2 instances based on the load using **AWS Auto Scaling**
+1. Configured CPU Utilization alarms to dynamically increase or decrease the EC2 instances based on the load using **AWS Auto Scaling**
+2. Utilized statsD to collect custom metrics like S3 data access time, number of API request, Database Access time, time taken to serve a request etc. and passed it to **AWS CloudWatch Agent**
+3. Centralized logging is implemented to collect the logs from all the EC2 instances and eliminated loss of log data when EC2 instances are brought down
 
 ---
 
-### TESTING
+### TESTING FRAMEWORKS USED
 
 1. Developed unit test cases using **Mockito**
 2. Load tested the application using **Apache JMeter**
@@ -65,11 +65,11 @@ To adopt microservices architecture, generation of reset password link feature i
 | Category | AWS Resources, Framework & Technologies |
 | --- | --- |
 | Programming Languages | Java, TSQL, HCL, HTML, CSS, JS |
+| Infrastructure | Terraform, AWS Lambda, VPC, RDS, S3, ELB, Auto Scaling, Route53, DynamoDB |
 | Web Application | Spring MVC, Hibernate, MySQL, AWS-SDK |
-| Infrastructure | Terraform, VPC, RDS, S3, ELB, Auto Scaling, Route53, AWS Lambda, DynamoDB |
-| Montoring & Logging | statsD, AWS Cloud-Watch Agent, Cloud-Watch Alarm, Log4js |
-| Notification | SNS, SES |
+| Web Server | Apache Tomcat |
 | Security | BCrypt, RDS Encryption, SSL/TLS |
 | CI/CD Pipeline | Circle CI |
+| Montoring & Logging | statsD, AWS Cloud-Watch Agent, Cloud-Watch Alarm, Log4js |
+| Notification | SNS, SES |
 | Testing Framework| Mockito, Apache JMeter |
-| Web Server | Apache Tomcat |
